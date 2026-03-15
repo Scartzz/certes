@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
     <Authors>Certes Contributors</Authors>
     <Company />
     <Product>Certes ACME Client CLI</Product>

@@ -109,9 +109,10 @@ namespace Certes.Pkcs
                 {
                     IsRoot = cert.IssuerDN.Equivalent(cert.SubjectDN),
                     Cert = cert
-                });
+                })
+                .ToList();
 
-            var rootCerts = new HashSet(certificates.Where(c => c.IsRoot).Select(c => new TrustAnchor(c.Cert, null)));
+            var rootCerts = new HashSet<TrustAnchor>(certificates.Where(c => c.IsRoot).Select(c => new TrustAnchor(c.Cert, null)));
             var intermediateCerts = certificates.Where(c => !c.IsRoot).Select(c => c.Cert).ToList();
             intermediateCerts.Add(certificate);
 
@@ -125,10 +126,9 @@ namespace Certes.Pkcs
                 IsRevocationEnabled = false
             };
 
-            builderParams.AddStore(
-                X509StoreFactory.Create(
-                    "Certificate/Collection",
-                    new X509CollectionStoreParameters(intermediateCerts)));
+            builderParams.AddStoreCert(
+                CollectionUtilities.CreateStore(
+                    intermediateCerts));
 
             var builder = new PkixCertPathBuilder();
             var result = builder.Build(builderParams);
