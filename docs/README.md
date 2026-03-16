@@ -1,4 +1,6 @@
-# Certes
+# Scartz.Certes
+
+**The project is a fork of https://github.com/fszlin/certes with packaging updates, feature updates and experimental extensions.** 
 
 Certes is an [ACME](https://en.wikipedia.org/wiki/Automated_Certificate_Management_Environment)
 client runs on .NET 4.5+ and .NET Standard 2.0+, supports ACME v2 and wildcard certificates.
@@ -6,13 +8,13 @@ It is aimed to provide an easy to use API for managing certificates during deplo
 
 ## Usage
 
-Install [Certes](https://www.nuget.org/packages/Certes/) nuget package into your project:
+Install [Certes](https://www.nuget.org/packages/Scartz.Certes/) nuget package into your project:
 ```PowerShell
-Install-Package Certes
+Install-Package Scartz.Certes
 ```
 or using .NET CLI:
 ```DOS
-dotnet add package Certes
+dotnet add package Scartz.Certes
 ```
 
 [Let's Encrypt](https://letsencrypt.org/how-it-works/)
@@ -121,7 +123,7 @@ The CLI is available as a dotnet global tool.
 
 To install Certes CLI *(you may need to restart the console session if this is the first dotnet tool installed)*
 ```DOS
-dotnet tool install --global dotnet-certes
+dotnet tool install --global scartz-dotnet-certes
 ```
 
 See [CLI usage](CLI.md), or simply use the `--help` option to get started
@@ -138,10 +140,10 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 Also check the [changelog](CHANGELOG.md) to see what's we are working on.
 
 ## CI Status
-[![NuGet](https://img.shields.io/nuget/vpre/certes.svg?label=Certes)](https://www.nuget.org/packages/certes/absoluteLatest/)
-[![NuGet](https://img.shields.io/nuget/dt/certes.svg)](https://www.nuget.org/packages/certes/)
-[![NuGet](https://img.shields.io/nuget/vpre/dotnet-certes.svg?label=CLI)](https://www.nuget.org/packages/dotnet-certes/absoluteLatest/)
-[![NuGet](https://img.shields.io/nuget/dt/dotnet-certes.svg)](https://www.nuget.org/packages/dotnet-certes/)
+[![NuGet](https://img.shields.io/nuget/vpre/scartz.certes.svg?label=Certes)](https://www.nuget.org/packages/scartz.certes/absoluteLatest/)
+[![NuGet](https://img.shields.io/nuget/dt/scartz.certes.svg)](https://www.nuget.org/packages/scartz.certes/)
+[![NuGet](https://img.shields.io/nuget/vpre/scartz-dotnet-certes.svg?label=CLI)](https://www.nuget.org/packages/scartz-dotnet-certes/absoluteLatest/)
+[![NuGet](https://img.shields.io/nuget/dt/scartz-dotnet-certes.svg)](https://www.nuget.org/packages/scartz-dotnet-certes/)
 
 
 [![AppVeyor](https://img.shields.io/appveyor/ci/fszlin/certes/main.svg)](https://ci.appveyor.com/project/fszlin/certes)
