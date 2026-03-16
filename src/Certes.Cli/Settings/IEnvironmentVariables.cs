@@ -1,7 +1,6 @@
-﻿namespace Certes.Cli.Settings
+﻿namespace Certes.Cli.Settings;
+
+internal interface IEnvironmentVariables
 {
-    internal interface IEnvironmentVariables
-    {
-        string GetVar(string name);
-    }
+    string GetVar(string name);
 }

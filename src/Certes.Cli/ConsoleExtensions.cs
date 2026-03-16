@@ -1,17 +1,17 @@
 ﻿using System.CommandLine;
 using System.CommandLine.IO;
 using Certes.Json;
-using Newtonsoft.Json;
 
-namespace Certes.Cli
+namespace Certes.Cli;
+
+using System.Text.Json;
+
+internal static class ConsoleExtensions
 {
-    internal static class ConsoleExtensions
-    {
-        private static readonly JsonSerializerSettings jsonSerializerSettings = JsonUtil.CreateSettings();
+    private static readonly JsonSerializerOptions jsonSerializerSettings = JsonUtil.CreateJsonSettings();
 
-        public static void WriteAsJson(this IConsole console, object value)
-        {
-            console.Out.WriteLine(JsonConvert.SerializeObject(value, jsonSerializerSettings));
-        }
+    public static void WriteAsJson(this IConsole console, object value)
+    {
+        console.Out.WriteLine(JsonSerializer.Serialize(value, jsonSerializerSettings));
     }
 }

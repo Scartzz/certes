@@ -6,31 +6,31 @@ using Certes.Acme;
 using System.Runtime.Serialization.Formatters.Binary;
 #endif
 
-namespace Certes
+namespace Certes;
+
+public class AcmeRequestExceptionTests
 {
-    public class AcmeRequestExceptionTests
+    [Fact]
+    public void CanCreateException()
     {
-        [Fact]
-        public void CanCreateException()
-        {
-            var ex = new AcmeRequestException();
-        }
+        var ex = new AcmeRequestException();
+    }
 
-        [Fact]
-        public void CanCreateExceptionWithMessage()
-        {
-            var ex = new AcmeRequestException("certes");
-            Assert.Equal("certes", ex.Message);
-        }
+    [Fact]
+    public void CanCreateExceptionWithMessage()
+    {
+        var ex = new AcmeRequestException("certes");
+        Assert.Equal("certes", ex.Message);
+    }
 
-        [Fact]
-        public void CanCreateExceptionWithInnerException()
-        {
-            var inner = new AcmeException();
-            var ex = new AcmeRequestException("certes", inner);
-            Assert.Equal("certes", ex.Message);
-            Assert.Equal(inner, ex.InnerException);
-        }
+    [Fact]
+    public void CanCreateExceptionWithInnerException()
+    {
+        var inner = new AcmeException();
+        var ex = new AcmeRequestException("certes", inner);
+        Assert.Equal("certes", ex.Message);
+        Assert.Equal(inner, ex.InnerException);
+    }
 
 #if NET452
         [Fact]
@@ -45,7 +45,7 @@ namespace Certes
                 serializer.Serialize(buffer, ex);
 
                 buffer.Seek(0, SeekOrigin.Begin);
-                var deserialized = (AcmeRequestException)serializer.Deserialize(buffer);
+                var deserialized = (AcmeRequestException)serializer.Deserialize<object>(buffer);
 
                 Assert.Equal("certes", deserialized.Message);
             }
@@ -64,7 +64,7 @@ namespace Certes
                 serializer.Serialize(buffer, ex);
 
                 buffer.Seek(0, SeekOrigin.Begin);
-                var deserialized = (AcmeRequestException)serializer.Deserialize(buffer);
+                var deserialized = (AcmeRequestException)serializer.Deserialize<object>(buffer);
 
                 Assert.Equal("certes\nt: error", deserialized.Message);
                 Assert.NotNull(deserialized.Error.Detail);
@@ -72,5 +72,4 @@ namespace Certes
             }
         }
 #endif
-    }
 }

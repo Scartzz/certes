@@ -5,46 +5,43 @@ using System.Linq;
 using System.Threading.Tasks;
 using Certes.Cli.Commands;
 using Certes.Json;
-using Newtonsoft.Json;
 using NLog;
 
-namespace Certes.Cli
+namespace Certes.Cli;
+
+internal class CliCore
 {
-    internal class CliCore
+    private readonly ILogger consoleLogger = LogManager.GetLogger(nameof(CliCore));
+
+    private readonly RootCommand rootCommand;
+
+    public CliCore(IEnumerable<ICliCommand> commands)
     {
-        private readonly ILogger consoleLogger = LogManager.GetLogger(nameof(CliCore));
-        private readonly JsonSerializerSettings jsonSettings = JsonUtil.CreateSettings();
+        rootCommand = new RootCommand();
 
-        private readonly RootCommand rootCommand;
-
-        public CliCore(IEnumerable<ICliCommand> commands)
+        foreach (var commandGroup in commands.GroupBy(c => c.Group))
         {
-            rootCommand = new RootCommand();
-
-            foreach (var commandGroup in commands.GroupBy(c => c.Group))
+            var groupCmd = new Command(commandGroup.Key.Command, commandGroup.Key.Help);
+            foreach (var cmd in commandGroup)
             {
-                var groupCmd = new Command(commandGroup.Key.Command, commandGroup.Key.Help);
-                foreach (var cmd in commandGroup)
-                {
-                    groupCmd.AddCommand(cmd.Define());
-                }
-
-                rootCommand.Add(groupCmd);
+                groupCmd.AddCommand(cmd.Define());
             }
+
+            rootCommand.Add(groupCmd);
         }
+    }
 
-        public async Task<bool> Run(string[] args)
+    public async Task<bool> Run(string[] args)
+    {
+        try
         {
-            try
-            {
-                return await rootCommand.InvokeAsync(args) == 0;
-            }
-            catch (Exception ex)
-            {
-                consoleLogger.Error(ex.Message);
-                consoleLogger.Debug(ex);
-                return false;
-            }
+            return await rootCommand.InvokeAsync(args) == 0;
+        }
+        catch (Exception ex)
+        {
+            consoleLogger.Error(ex.Message);
+            consoleLogger.Debug(ex);
+            return false;
         }
     }
 }

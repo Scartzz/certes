@@ -2,51 +2,57 @@
 using System.Net;
 using Certes.Acme.Resource;
 
-namespace Certes.Acme
+namespace Certes.Acme;
+
+using System.Text.Json.Serialization;
+
+/// <summary>
+/// Represents an error returned from ACME server.
+/// </summary>
+public class AcmeError
 {
     /// <summary>
-    /// Represents an error returned from ACME server.
+    /// Gets or sets the error type URI.
     /// </summary>
-    public class AcmeError
-    {
-        /// <summary>
-        /// Gets or sets the error type URI.
-        /// </summary>
-        /// <value>
-        /// The error type URI.
-        /// </value>
-        public string Type { get; set; }
+    /// <value>
+    /// The error type URI.
+    /// </value>
+    [JsonPropertyName("type")]
+    public string Type { get; set; }
 
-        /// <summary>
-        /// Gets or sets the detail message.
-        /// </summary>
-        /// <value>
-        /// The detail message.
-        /// </value>
-        public string Detail { get; set; }
+    /// <summary>
+    /// Gets or sets the detail message.
+    /// </summary>
+    /// <value>
+    /// The detail message.
+    /// </value>
+    [JsonPropertyName("detail")]
+    public string Detail { get; set; }
 
-        /// <summary>
-        /// Gets or sets the identifier for this error.
-        /// </summary>
-        /// <value>
-        /// The identifier for this error.
-        /// </value>
-        public Identifier Identifier { get; set;}
+    /// <summary>
+    /// Gets or sets the identifier for this error.
+    /// </summary>
+    /// <value>
+    /// The identifier for this error.
+    /// </value>
+    [JsonPropertyName("identifier")]
+    public Identifier Identifier { get; set;}
 
-        /// <summary>
-        /// Gets or sets the subproblems.
-        /// </summary>
-        /// <value>
-        /// The subproblems.
-        /// </value>
-        public IList<AcmeError> Subproblems { get; set; }
+    /// <summary>
+    /// Gets or sets the subproblems.
+    /// </summary>
+    /// <value>
+    /// The subproblems.
+    /// </value>
+    [JsonPropertyName("subproblems")]
+    public IList<AcmeError> Subproblems { get; set; }
 
-        /// <summary>
-        /// Gets or sets the HTTP status.
-        /// </summary>
-        /// <value>
-        /// The HTTP status.
-        /// </value>
-        public HttpStatusCode Status { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the HTTP status.
+    /// </summary>
+    /// <value>
+    /// The HTTP status.
+    /// </value>
+    [JsonPropertyName("status")]
+    public HttpStatusCode Status { get; set; }
 }

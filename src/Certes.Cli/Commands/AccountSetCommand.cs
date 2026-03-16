@@ -4,50 +4,49 @@ using System.CommandLine.Invocation;
 using Certes.Cli.Settings;
 using NLog;
 
-namespace Certes.Cli.Commands
+namespace Certes.Cli.Commands;
+
+internal class AccountSetCommand : CommandBase, ICliCommand
 {
-    internal class AccountSetCommand : CommandBase, ICliCommand
+    public record Args(Uri Server, string KeyPath);
+
+    private static readonly ILogger logger = LogManager.GetLogger(nameof(AccountSetCommand));
+
+    public AccountSetCommand(IUserSettings userSettings, AcmeContextFactory contextFactory, IFileUtil fileUtil)
+        : base(userSettings, contextFactory, fileUtil)
     {
-        public record Args(Uri Server, string KeyPath);
+    }
 
-        private static readonly ILogger logger = LogManager.GetLogger(nameof(AccountSetCommand));
+    public CommandGroup Group => CommandGroup.Account;
 
-        public AccountSetCommand(IUserSettings userSettings, AcmeContextFactory contextFactory, IFileUtil fileUtil)
-            : base(userSettings, contextFactory, fileUtil)
+    public Command Define()
+    {
+        var cmd = new Command("set", Strings.HelpCommandAccountSet)
         {
-        }
+            new Option<Uri>(new[]{ "--server", "-s" }, Strings.HelpServer),
+            new Argument<string>("key-path", Strings.HelpKey),
+        };
 
-        public CommandGroup Group => CommandGroup.Account;
-
-        public Command Define()
+        cmd.Handler = CommandHandler.Create(async (Args args, IConsole console) =>
         {
-            var cmd = new Command("set", Strings.HelpCommandAccountSet)
+            var (server, keyPath) = args;
+            var (serverUri, key) = await ReadAccountKey(server, keyPath, false);
+
+            logger.Debug("Setting account for '{0}'.", serverUri);
+
+            var acme = ContextFactory.Invoke(serverUri, key);
+            var acctCtx = await acme.Account();
+
+            await UserSettings.SetAccountKey(serverUri, key);
+            var output = new
             {
-                new Option<Uri>(new[]{ "--server", "-s" }, Strings.HelpServer),
-                new Argument<string>("key-path", Strings.HelpKey),
+                location = acctCtx.Location,
+                resource = await acctCtx.Resource()
             };
 
-            cmd.Handler = CommandHandler.Create(async (Args args, IConsole console) =>
-            {
-                var (server, keyPath) = args;
-                var (serverUri, key) = await ReadAccountKey(server, keyPath, false);
+            console.WriteAsJson(output);
+        });
 
-                logger.Debug("Setting account for '{0}'.", serverUri);
-
-                var acme = ContextFactory.Invoke(serverUri, key);
-                var acctCtx = await acme.Account();
-
-                await UserSettings.SetAccountKey(serverUri, key);
-                var output = new
-                {
-                    location = acctCtx.Location,
-                    resource = await acctCtx.Resource()
-                };
-
-                console.WriteAsJson(output);
-            });
-
-            return cmd;
-        }
+        return cmd;
     }
 }

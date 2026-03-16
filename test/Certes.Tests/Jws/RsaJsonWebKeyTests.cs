@@ -1,16 +1,15 @@
 ﻿using Xunit;
 
-namespace Certes.Jws
+namespace Certes.Jws;
+
+public class RsaJsonWebKeyTests
 {
-    public class RsaJsonWebKeyTests
+    [Fact]
+    public void CanGetSetProperties()
     {
-        [Fact]
-        public void CanGetSetProperties()
-        {
-            var key = new RsaJsonWebKey();
-            key.VerifyGetterSetter(a => a.Exponent, "certes");
-            key.VerifyGetterSetter(a => a.KeyType, "rsa");
-            key.VerifyGetterSetter(a => a.Modulus, "13");
-        }
+        var key = new RsaJsonWebKey();
+        key.VerifyGetterSetter(a => a.Exponent, "certes");
+        key.VerifyGetterSetter(a => a.KeyType, "rsa");
+        key.VerifyGetterSetter(a => a.Modulus, "13");
     }
 }

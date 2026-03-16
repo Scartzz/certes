@@ -1,10 +1,9 @@
 ﻿using System.CommandLine;
 
-namespace Certes.Cli.Commands
+namespace Certes.Cli.Commands;
+
+internal interface ICliCommand
 {
-    internal interface ICliCommand
-    {
-        CommandGroup Group { get; }
-        Command Define();
-    }
+    CommandGroup Group { get; }
+    Command Define();
 }

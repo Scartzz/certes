@@ -1,30 +1,26 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace Certes.Json
+namespace Certes.Json;
+
+using System.Text.Encodings.Web;
+
+/// <summary>
+/// Helper methods for JSON serialization.
+/// </summary>
+public static class JsonUtil
 {
     /// <summary>
-    /// Helper methods for JSON serialization.
+    /// Creates the <see cref="JsonSerializerOptions"/> used for ACME entity serialization.
     /// </summary>
-    public static class JsonUtil
+    /// <returns>The JSON serializer settings.</returns>
+    public static JsonSerializerOptions CreateJsonSettings()
     {
-        /// <summary>
-        /// Creates the <see cref="JsonSerializerSettings"/> used for ACME entity serialization.
-        /// </summary>
-        /// <returns>The JSON serializer settings.</returns>
-        public static JsonSerializerSettings CreateSettings()
+        return new JsonSerializerOptions()
         {
-            var jsonSettings = new JsonSerializerSettings
-            {
-                ContractResolver = new DefaultContractResolver {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                },
-                NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Include,
-                MissingMemberHandling = MissingMemberHandling.Ignore
-            };
-
-            return jsonSettings;
-        }
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
     }
 }

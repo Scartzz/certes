@@ -1,8 +1,7 @@
-﻿namespace Certes.Crypto
+﻿namespace Certes.Crypto;
+
+internal interface IKeyAlgorithm
 {
-    internal interface IKeyAlgorithm
-    {
-        ISigner CreateSigner(IKey keyPair);
-        IKey GenerateKey(int? keySize = null);
-    }
+    ISigner CreateSigner(IKey keyPair);
+    IKey GenerateKey(int? keySize = null);
 }

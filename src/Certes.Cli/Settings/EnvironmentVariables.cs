@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace Certes.Cli.Settings
+namespace Certes.Cli.Settings;
+
+internal class EnvironmentVariables : IEnvironmentVariables
 {
-    internal class EnvironmentVariables : IEnvironmentVariables
-    {
-        public string GetVar(string name)
-            => Environment.GetEnvironmentVariable(name);
-    }
+    public string GetVar(string name)
+        => Environment.GetEnvironmentVariable(name);
 }

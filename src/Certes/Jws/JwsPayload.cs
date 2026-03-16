@@ -1,38 +1,36 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace Certes.Jws
+namespace Certes.Jws;
+
+/// <summary>
+/// Represents data signed with JWS.
+/// </summary>
+public class JwsPayload
 {
     /// <summary>
-    /// Represents data signed with JWS.
+    /// Gets or sets the protected.
     /// </summary>
-    public class JwsPayload
-    {
-        /// <summary>
-        /// Gets or sets the protected.
-        /// </summary>
-        /// <value>
-        /// The protected.
-        /// </value>
-        [JsonProperty("protected")]
-        public string Protected { get; set; }
+    /// <value>
+    /// The protected.
+    /// </value>
+    [JsonPropertyName("protected")]
+    public string Protected { get; set; }
 
-        /// <summary>
-        /// Gets or sets the payload.
-        /// </summary>
-        /// <value>
-        /// The payload.
-        /// </value>
-        [JsonProperty("payload")]
-        public string Payload { get; set; }
+    /// <summary>
+    /// Gets or sets the payload.
+    /// </summary>
+    /// <value>
+    /// The payload.
+    /// </value>
+    [JsonPropertyName("payload")]
+    public string Payload { get; set; }
 
-        /// <summary>
-        /// Gets or sets the signature.
-        /// </summary>
-        /// <value>
-        /// The signature.
-        /// </value>
-        [JsonProperty("signature")]
-        public string Signature { get; set; }
-    }
-
+    /// <summary>
+    /// Gets or sets the signature.
+    /// </summary>
+    /// <value>
+    /// The signature.
+    /// </value>
+    [JsonPropertyName("signature")]
+    public string Signature { get; set; }
 }

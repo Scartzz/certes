@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace Certes.Cli.Settings
+namespace Certes.Cli.Settings;
+
+internal class AcmeSettings
 {
-    internal class AcmeSettings
-    {
-        public Uri ServerUri { get; set; }
-        public byte[] Key { get; set; }
-    }
+    public Uri ServerUri { get; set; }
+    public byte[] Key { get; set; }
 }

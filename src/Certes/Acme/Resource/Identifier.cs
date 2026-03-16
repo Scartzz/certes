@@ -1,28 +1,27 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace Certes.Acme.Resource
+namespace Certes.Acme.Resource;
+
+/// <summary>
+/// Represents the identifier for <see cref="Authorization"/>.
+/// </summary>
+public class Identifier
 {
     /// <summary>
-    /// Represents the identifier for <see cref="Authorization"/>.
+    /// Gets or sets the type.
     /// </summary>
-    public class Identifier
-    {
-        /// <summary>
-        /// Gets or sets the type.
-        /// </summary>
-        /// <value>
-        /// The type.
-        /// </value>
-        [JsonProperty("type")]
-        public IdentifierType Type { get; set; }
+    /// <value>
+    /// The type.
+    /// </value>
+    [JsonPropertyName("type")]
+    public IdentifierType Type { get; set; }
 
-        /// <summary>
-        /// Gets or sets the value.
-        /// </summary>
-        /// <value>
-        /// The value.
-        /// </value>
-        [JsonProperty("value")]
-        public string Value { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the value.
+    /// </summary>
+    /// <value>
+    /// The value.
+    /// </value>
+    [JsonPropertyName("value")]
+    public string Value { get; set; }
 }

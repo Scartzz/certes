@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 
-namespace Certes.Pkcs
+namespace Certes.Pkcs;
+
+/// <summary>
+/// Supports building Certificate Signing Request (CSR).
+/// </summary>
+public interface ICertificationRequestBuilder
 {
     /// <summary>
-    /// Supports building Certificate Signing Request (CSR).
+    /// Generates the CSR.
     /// </summary>
-    public interface ICertificationRequestBuilder
-    {
-        /// <summary>
-        /// Generates the CSR.
-        /// </summary>
-        /// <returns>The CSR data.</returns>
-        byte[] Generate();
-    }
+    /// <returns>The CSR data.</returns>
+    byte[] Generate();
 }

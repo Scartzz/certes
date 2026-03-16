@@ -2,54 +2,53 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Certes.Pkcs
+namespace Certes.Pkcs;
+
+public class CertificationRequestBuilderTests
 {
-    public class CertificationRequestBuilderTests
+    [Fact]
+    public void CanCreateCsrWithSignatureKey()
     {
-        [Fact]
-        public void CanCreateCsrWithSignatureKey()
+        var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
+        new CertificationRequestBuilder(key);
+    }
+
+    [Fact]
+    public void CanSetSubjectAlternativeNames()
+    {
+        var san = new[]
         {
-            var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
-            new CertificationRequestBuilder(key);
-        }
+            "www.example.com",
+            "www1.example.com"
+        };
 
-        [Fact]
-        public void CanSetSubjectAlternativeNames()
+        var csr = new CertificationRequestBuilder()
         {
-            var san = new[]
-            {
-                "www.example.com",
-                "www1.example.com"
-            };
+            SubjectAlternativeNames = san
+        };
 
-            var csr = new CertificationRequestBuilder()
-            {
-                SubjectAlternativeNames = san
-            };
+        Assert.Equal(san, csr.SubjectAlternativeNames);
 
-            Assert.Equal(san, csr.SubjectAlternativeNames);
+        Assert.Throws<ArgumentNullException>(() => csr.SubjectAlternativeNames = null);
+    }
 
-            Assert.Throws<ArgumentNullException>(() => csr.SubjectAlternativeNames = null);
-        }
+    [Fact]
+    public void CanAddAttributes()
+    {
+        var csr = new CertificationRequestBuilder();
+        csr.AddName("st", "yonge street");
+        csr.AddName("cn", "www.certes.com");
 
-        [Fact]
-        public void CanAddAttributes()
-        {
-            var csr = new CertificationRequestBuilder();
-            csr.AddName("st", "yonge street");
-            csr.AddName("cn", "www.certes.com");
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            csr.AddName("invalid-name", "omg"));
+    }
 
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                csr.AddName("invalid-name", "omg"));
-        }
-
-        [Fact]
-        public void CanBuildCsrWithoutSubjectAlternativeName()
-        {
-            var csr = new CertificationRequestBuilder();
-            csr.AddName("cn", "www.example.com");
-            var csrData = csr.Generate();
-            Assert.NotNull(csrData);
-        }
+    [Fact]
+    public void CanBuildCsrWithoutSubjectAlternativeName()
+    {
+        var csr = new CertificationRequestBuilder();
+        csr.AddName("cn", "www.example.com");
+        var csrData = csr.Generate();
+        Assert.NotNull(csrData);
     }
 }

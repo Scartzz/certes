@@ -1,33 +1,32 @@
-﻿namespace Certes.Acme.Resource
+﻿namespace Certes.Acme.Resource;
+
+/// <summary>
+/// Represents status of <see cref="Identifier"/>.
+/// </summary>
+public static class IdentifierStatus
 {
     /// <summary>
-    /// Represents status of <see cref="Identifier"/>.
+    /// The pending status.
     /// </summary>
-    public static class IdentifierStatus
-    {
-        /// <summary>
-        /// The pending status.
-        /// </summary>
-        public const string Pending = "pending";
+    public const string Pending = "pending";
 
-        /// <summary>
-        /// The processing status.
-        /// </summary>
-        public const string Processing = "processing";
+    /// <summary>
+    /// The processing status.
+    /// </summary>
+    public const string Processing = "processing";
 
-        /// <summary>
-        /// The valid status.
-        /// </summary>
-        public const string Valid = "valid";
+    /// <summary>
+    /// The valid status.
+    /// </summary>
+    public const string Valid = "valid";
 
-        /// <summary>
-        /// The invalid status.
-        /// </summary>
-        public const string Invalid = "invalid";
+    /// <summary>
+    /// The invalid status.
+    /// </summary>
+    public const string Invalid = "invalid";
 
-        /// <summary>
-        /// The revoked status.
-        /// </summary>
-        public const string Revoked = "revoked";
-    }
+    /// <summary>
+    /// The revoked status.
+    /// </summary>
+    public const string Revoked = "revoked";
 }

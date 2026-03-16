@@ -1,16 +1,15 @@
 ﻿using Certes.Acme.Resource;
 using Xunit;
 
-namespace Certes.Tests.Acme.Resource
+namespace Certes.Tests.Acme.Resource;
+
+public class IdentifierTests
 {
-    public class IdentifierTests
+    [Fact]
+    public void CanGetSetProperties()
     {
-        [Fact]
-        public void CanGetSetProperties()
-        {
-            var authorizationIdentifier = new Identifier();
-            authorizationIdentifier.VerifyGetterSetter(a => a.Type, IdentifierType.Dns);
-            authorizationIdentifier.VerifyGetterSetter(a => a.Value, "certes is working");
-        }
+        var authorizationIdentifier = new Identifier();
+        authorizationIdentifier.VerifyGetterSetter(a => a.Type, IdentifierType.Dns);
+        authorizationIdentifier.VerifyGetterSetter(a => a.Value, "certes is working");
     }
 }

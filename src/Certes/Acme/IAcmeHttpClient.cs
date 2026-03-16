@@ -3,129 +3,131 @@ using System.Threading.Tasks;
 using Certes.Jws;
 using Certes.Properties;
 
-namespace Certes.Acme
+namespace Certes.Acme;
+
+/// <summary>
+/// Supports HTTP operations for ACME servers.
+/// </summary>
+public interface IAcmeHttpClient
 {
     /// <summary>
-    /// Supports HTTP operations for ACME servers.
+    /// Gets the nonce for next request.
     /// </summary>
-    public interface IAcmeHttpClient
+    /// <returns>
+    /// The nonce.
+    /// </returns>
+    Task<string> ConsumeNonce();
+
+    /// <summary>
+    /// Posts the data to the specified URI.
+    /// </summary>
+    /// <typeparam name="TRequest">The type of request</typeparam>
+    /// <typeparam name="TResponse">The type of expected result</typeparam>
+    /// <param name="uri">The URI.</param>
+    /// <param name="payload">The payload.</param>
+    /// <returns>The response from ACME server.</returns>
+    Task<AcmeHttpResponse<TResponse>> Post<TRequest, TResponse>(Uri uri, TRequest payload);
+
+    /// <summary>
+    /// Gets the data from specified URI.
+    /// </summary>
+    /// <typeparam name="T">The type of expected result</typeparam>
+    /// <param name="uri">The URI.</param>
+    /// <returns>The response from ACME server.</returns>
+    Task<AcmeHttpResponse<T>> Get<T>(Uri uri);
+}
+
+/// <summary>
+/// Extension methods for <see cref="IAcmeHttpClient"/>.
+/// </summary>
+internal static class IAcmeHttpClientExtensions
+{
+    /// <summary>
+    /// Posts the data to the specified URI.
+    /// </summary>
+    /// <typeparam name="TRequest">The type of request</typeparam>
+    /// <typeparam name="TResponse">The type of expected result</typeparam>
+    /// <param name="client">The client.</param>
+    /// <param name="context">The context.</param>
+    /// <param name="location">The URI.</param>
+    /// <param name="entity">The payload.</param>
+    /// <param name="ensureSuccessStatusCode">if set to <c>true</c>, throw exception if the request failed.</param>
+    /// <returns>
+    /// The response from ACME server.
+    /// </returns>
+    /// <exception cref="Exception">
+    /// If the HTTP request failed and <paramref name="ensureSuccessStatusCode"/> is <c>true</c>.
+    /// </exception>
+    internal static async Task<AcmeHttpResponse<TResponse>> Post<TRequest, TResponse>(this IAcmeHttpClient client,
+        IAcmeContext context,
+        Uri location,
+        TRequest entity,
+        bool ensureSuccessStatusCode)
     {
-        /// <summary>
-        /// Gets the nonce for next request.
-        /// </summary>
-        /// <returns>
-        /// The nonce.
-        /// </returns>
-        Task<string> ConsumeNonce();
 
-        /// <summary>
-        /// Posts the data to the specified URI.
-        /// </summary>
-        /// <typeparam name="T">The type of expected result</typeparam>
-        /// <param name="uri">The URI.</param>
-        /// <param name="payload">The payload.</param>
-        /// <returns>The response from ACME server.</returns>
-        Task<AcmeHttpResponse<T>> Post<T>(Uri uri, object payload);
+        var payload = await context.Sign<TRequest>(entity, location);
+        var response = await client.Post<JwsPayload, TResponse>(location, payload);
+        var retryCount = context.BadNonceRetryCount;
+        while (response.Error?.Status == System.Net.HttpStatusCode.BadRequest &&
+               response.Error.Type?.CompareTo("urn:ietf:params:acme:error:badNonce") == 0 &&
+               retryCount-- > 0)
+        {
+            payload = await context.Sign<TRequest>(entity, location);
+            response = await client.Post<JwsPayload, TResponse>(location, payload);
+        }
 
-        /// <summary>
-        /// Gets the data from specified URI.
-        /// </summary>
-        /// <typeparam name="T">The type of expected result</typeparam>
-        /// <param name="uri">The URI.</param>
-        /// <returns>The response from ACME server.</returns>
-        Task<AcmeHttpResponse<T>> Get<T>(Uri uri);
+        if (ensureSuccessStatusCode && response.Error != null)
+        {
+            throw new AcmeRequestException(
+                string.Format(Strings.ErrorFetchResource, location),
+                response.Error);
+        }
+
+        return response;
     }
 
     /// <summary>
-    /// Extension methods for <see cref="IAcmeHttpClient"/>.
+    /// Posts the data to the specified URI.
     /// </summary>
-    internal static class IAcmeHttpClientExtensions
+    /// <typeparam name="TRequest">The type of request</typeparam>
+    /// <typeparam name="TResponse">The type of expected result</typeparam>
+    /// <param name="client">The client.</param>
+    /// <param name="jwsSigner">The jwsSigner used to sign the payload.</param>
+    /// <param name="location">The URI.</param>
+    /// <param name="entity">The payload.</param>
+    /// <param name="ensureSuccessStatusCode">if set to <c>true</c>, throw exception if the request failed.</param>
+    /// <param name="retryCount">Number of retries on badNonce errors (default = 1)</param>
+    /// <returns>
+    /// The response from ACME server.
+    /// </returns>
+    /// <exception cref="Exception">
+    /// If the HTTP request failed and <paramref name="ensureSuccessStatusCode"/> is <c>true</c>.
+    /// </exception>
+    internal static async Task<AcmeHttpResponse<TResponse>> Post<TRequest, TResponse>(this IAcmeHttpClient client,
+        JwsSigner jwsSigner,
+        Uri location,
+        TRequest entity,
+        bool ensureSuccessStatusCode,
+        int retryCount = 1)
     {
-        /// <summary>
-        /// Posts the data to the specified URI.
-        /// </summary>
-        /// <typeparam name="T">The type of expected result</typeparam>
-        /// <param name="client">The client.</param>
-        /// <param name="context">The context.</param>
-        /// <param name="location">The URI.</param>
-        /// <param name="entity">The payload.</param>
-        /// <param name="ensureSuccessStatusCode">if set to <c>true</c>, throw exception if the request failed.</param>
-        /// <returns>
-        /// The response from ACME server.
-        /// </returns>
-        /// <exception cref="Exception">
-        /// If the HTTP request failed and <paramref name="ensureSuccessStatusCode"/> is <c>true</c>.
-        /// </exception>
-        internal static async Task<AcmeHttpResponse<T>> Post<T>(this IAcmeHttpClient client,
-            IAcmeContext context,
-            Uri location,
-            object entity,
-            bool ensureSuccessStatusCode)
+        var payload = jwsSigner.Sign<TRequest>(entity, url: location, nonce: await client.ConsumeNonce());
+        var response = await client.Post<JwsPayload, TResponse>(location, payload);
+
+        while (response.Error?.Status == System.Net.HttpStatusCode.BadRequest &&
+               response.Error.Type?.CompareTo("urn:ietf:params:acme:error:badNonce") == 0 &&
+               retryCount-- > 0)
         {
-
-            var payload = await context.Sign(entity, location);
-            var response = await client.Post<T>(location, payload);
-            var retryCount = context.BadNonceRetryCount;
-            while (response.Error?.Status == System.Net.HttpStatusCode.BadRequest &&
-                response.Error.Type?.CompareTo("urn:ietf:params:acme:error:badNonce") == 0 &&
-                retryCount-- > 0)
-            {
-                payload = await context.Sign(entity, location);
-                response = await client.Post<T>(location, payload);
-            }
-
-            if (ensureSuccessStatusCode && response.Error != null)
-            {
-                throw new AcmeRequestException(
-                    string.Format(Strings.ErrorFetchResource, location),
-                    response.Error);
-            }
-
-            return response;
+            payload = jwsSigner.Sign<TRequest>(entity, url: location, nonce: await client.ConsumeNonce());
+            response = await client.Post<JwsPayload, TResponse>(location, payload);
         }
 
-        /// <summary>
-        /// Posts the data to the specified URI.
-        /// </summary>
-        /// <typeparam name="T">The type of expected result</typeparam>
-        /// <param name="client">The client.</param>
-        /// <param name="jwsSigner">The jwsSigner used to sign the payload.</param>
-        /// <param name="location">The URI.</param>
-        /// <param name="entity">The payload.</param>
-        /// <param name="ensureSuccessStatusCode">if set to <c>true</c>, throw exception if the request failed.</param>
-        /// <param name="retryCount">Number of retries on badNonce errors (default = 1)</param>
-        /// <returns>
-        /// The response from ACME server.
-        /// </returns>
-        /// <exception cref="Exception">
-        /// If the HTTP request failed and <paramref name="ensureSuccessStatusCode"/> is <c>true</c>.
-        /// </exception>
-        internal static async Task<AcmeHttpResponse<T>> Post<T>(this IAcmeHttpClient client,
-            JwsSigner jwsSigner,
-            Uri location,
-            object entity,
-            bool ensureSuccessStatusCode,
-            int retryCount = 1)
+        if (ensureSuccessStatusCode && response.Error != null)
         {
-            var payload = jwsSigner.Sign(entity, url: location, nonce: await client.ConsumeNonce());
-            var response = await client.Post<T>(location, payload);
-
-            while (response.Error?.Status == System.Net.HttpStatusCode.BadRequest &&
-                response.Error.Type?.CompareTo("urn:ietf:params:acme:error:badNonce") == 0 &&
-                retryCount-- > 0)
-            {
-                payload = jwsSigner.Sign(entity, url: location, nonce: await client.ConsumeNonce());
-                response = await client.Post<T>(location, payload);
-            }
-
-            if (ensureSuccessStatusCode && response.Error != null)
-            {
-                throw new AcmeRequestException(
-                    string.Format(Strings.ErrorFetchResource, location),
-                    response.Error);
-            }
-
-            return response;
+            throw new AcmeRequestException(
+                string.Format(Strings.ErrorFetchResource, location),
+                response.Error);
         }
+
+        return response;
     }
 }

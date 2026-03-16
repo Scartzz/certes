@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Certes.Acme
+namespace Certes.Acme;
+
+/// <summary>
+/// Supports loading ACME resource with URI.
+/// </summary>
+/// <typeparam name="T">The resource entity type.</typeparam>
+public interface IResourceContext<T>
 {
     /// <summary>
-    /// Supports loading ACME resource with URI.
+    /// Gets the location.
     /// </summary>
-    /// <typeparam name="T">The resource entity type.</typeparam>
-    public interface IResourceContext<T>
-    {
-        /// <summary>
-        /// Gets the location.
-        /// </summary>
-        /// <value>
-        /// The location.
-        /// </value>
-        Uri Location { get; }
+    /// <value>
+    /// The location.
+    /// </value>
+    Uri Location { get; }
 
-        /// <summary>
-        /// The timespan after which to retry the request
-        /// </summary>
-        int RetryAfter { get; }
+    /// <summary>
+    /// The timespan after which to retry the request
+    /// </summary>
+    int RetryAfter { get; }
 
-        /// <summary>
-        /// Gets the ACME resource.
-        /// </summary>
-        /// <returns>The resource entity.</returns>
-        Task<T> Resource();
-    }
+    /// <summary>
+    /// Gets the ACME resource.
+    /// </summary>
+    /// <returns>The resource entity.</returns>
+    Task<T> Resource();
 }

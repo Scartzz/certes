@@ -4,49 +4,48 @@ using System.CommandLine.Invocation;
 using Certes.Cli.Settings;
 using NLog;
 
-namespace Certes.Cli.Commands
+namespace Certes.Cli.Commands;
+
+internal class AccountShowCommand : CommandBase, ICliCommand
 {
-    internal class AccountShowCommand : CommandBase, ICliCommand
+    public record Args(Uri Server, string KeyPath);
+
+    private static readonly ILogger logger = LogManager.GetLogger(nameof(AccountShowCommand));
+
+    public AccountShowCommand(IUserSettings userSettings, AcmeContextFactory contextFactory, IFileUtil fileUtil)
+        : base(userSettings, contextFactory, fileUtil)
     {
-        public record Args(Uri Server, string KeyPath);
+    }
 
-        private static readonly ILogger logger = LogManager.GetLogger(nameof(AccountShowCommand));
+    public CommandGroup Group => CommandGroup.Account;
 
-        public AccountShowCommand(IUserSettings userSettings, AcmeContextFactory contextFactory, IFileUtil fileUtil)
-            : base(userSettings, contextFactory, fileUtil)
+    public Command Define()
+    {
+        var cmd = new Command("show", Strings.HelpCommandAccountShow)
         {
-        }
+            new Option<Uri>(new[]{ "--server", "-s" }, Strings.HelpServer),
+            new Option<string>(new[]{ "--key-path", "--key", "-k" }, Strings.HelpKey),
+        };
 
-        public CommandGroup Group => CommandGroup.Account;
-
-        public Command Define()
+        cmd.Handler = CommandHandler.Create(async (Args args, IConsole console) =>
         {
-            var cmd = new Command("show", Strings.HelpCommandAccountShow)
+            var (server, keyPath) = args;
+            var (serverUri, key) = await ReadAccountKey(server, keyPath, true, true);
+
+            logger.Debug("Loading account from '{0}'.", serverUri);
+
+            var acme = ContextFactory.Invoke(serverUri, key);
+            var acctCtx = await acme.Account();
+
+            var output = new
             {
-                new Option<Uri>(new[]{ "--server", "-s" }, Strings.HelpServer),
-                new Option<string>(new[]{ "--key-path", "--key", "-k" }, Strings.HelpKey),
+                location = acctCtx.Location,
+                resource = await acctCtx.Resource()
             };
 
-            cmd.Handler = CommandHandler.Create(async (Args args, IConsole console) =>
-            {
-                var (server, keyPath) = args;
-                var (serverUri, key) = await ReadAccountKey(server, keyPath, true, true);
+            console.WriteAsJson(output);
+        });
 
-                logger.Debug("Loading account from '{0}'.", serverUri);
-
-                var acme = ContextFactory.Invoke(serverUri, key);
-                var acctCtx = await acme.Account();
-
-                var output = new
-                {
-                    location = acctCtx.Location,
-                    resource = await acctCtx.Resource()
-                };
-
-                console.WriteAsJson(output);
-            });
-
-            return cmd;
-        }
+        return cmd;
     }
 }

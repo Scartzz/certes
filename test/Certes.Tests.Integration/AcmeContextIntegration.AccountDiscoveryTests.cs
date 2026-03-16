@@ -5,29 +5,28 @@ using Xunit.Abstractions;
 using static Certes.Helper;
 using static Certes.IntegrationHelper;
 
-namespace Certes
+namespace Certes;
+
+public partial class AcmeContextIntegration
 {
-    public partial class AcmeContextIntegration
+    public class AccountDiscoveryTests : AcmeContextIntegration
     {
-        public class AccountDiscoveryTests : AcmeContextIntegration
+        public AccountDiscoveryTests(ITestOutputHelper output)
+            : base(output)
         {
-            public AccountDiscoveryTests(ITestOutputHelper output)
-                : base(output)
-            {
-            }
+        }
 
-            [Fact]
-            public async Task CanDiscoverAccountByKey()
-            {
-                var dirUri = await GetAcmeUriV2();
+        [Fact]
+        public async Task CanDiscoverAccountByKey()
+        {
+            var dirUri = await GetAcmeUriV2();
 
-                var ctx = new AcmeContext(dirUri, GetKeyV2(), GetAcmeHttpClient(dirUri));
-                var acct = await ctx.Account();
+            var ctx = new AcmeContext(dirUri, GetKeyV2(), GetAcmeHttpClient(dirUri));
+            var acct = await ctx.Account();
 
-                Assert.NotNull(acct.Location);
+            Assert.NotNull(acct.Location);
 
-                var res = await acct.Resource();
-            }
+            var res = await acct.Resource();
         }
     }
 }

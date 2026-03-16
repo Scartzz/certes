@@ -4,45 +4,44 @@ using System.CommandLine.Invocation;
 using Certes.Cli.Settings;
 using NLog;
 
-namespace Certes.Cli.Commands
+namespace Certes.Cli.Commands;
+
+internal class ServerShowCommand : ICliCommand
 {
-    internal class ServerShowCommand : ICliCommand
+    private static readonly ILogger logger = LogManager.GetLogger(nameof(ServerShowCommand));
+    private readonly AcmeContextFactory contextFactory;
+    private readonly IUserSettings userSettings;
+
+    public ServerShowCommand(IUserSettings userSettings, AcmeContextFactory contextFactory)
     {
-        private static readonly ILogger logger = LogManager.GetLogger(nameof(ServerShowCommand));
-        private readonly AcmeContextFactory contextFactory;
-        private readonly IUserSettings userSettings;
+        this.userSettings = userSettings;
+        this.contextFactory = contextFactory;
+    }
 
-        public ServerShowCommand(IUserSettings userSettings, AcmeContextFactory contextFactory)
+    public CommandGroup Group => CommandGroup.Server;
+
+    public Command Define()
+    {
+        var cmd = new Command("show", Strings.HelpCommandServerShow)
         {
-            this.userSettings = userSettings;
-            this.contextFactory = contextFactory;
-        }
+            new Option<Uri>(new[]{ "--server", "-s" }, Strings.HelpServer),
+        };
 
-        public CommandGroup Group => CommandGroup.Server;
-
-        public Command Define()
+        cmd.Handler = CommandHandler.Create(async (Uri server, IConsole console) =>
         {
-            var cmd = new Command("show", Strings.HelpCommandServerShow)
+            var serverUri = server ?? await userSettings.GetDefaultServer();
+
+            var ctx = contextFactory.Invoke(serverUri, null);
+            logger.Debug("Loading directory from '{0}'", serverUri);
+            var directory = await ctx.GetDirectory();
+
+            console.WriteAsJson(new
             {
-                new Option<Uri>(new[]{ "--server", "-s" }, Strings.HelpServer),
-            };
-
-            cmd.Handler = CommandHandler.Create(async (Uri server, IConsole console) =>
-            {
-                var serverUri = server ?? await userSettings.GetDefaultServer();
-
-                var ctx = contextFactory.Invoke(serverUri, null);
-                logger.Debug("Loading directory from '{0}'", serverUri);
-                var directory = await ctx.GetDirectory();
-
-                console.WriteAsJson(new
-                {
-                    location = serverUri,
-                    resource = directory,
-                });
+                location = serverUri,
+                resource = directory,
             });
+        });
 
-            return cmd;
-        }
+        return cmd;
     }
 }

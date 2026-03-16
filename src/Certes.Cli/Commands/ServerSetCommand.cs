@@ -4,44 +4,43 @@ using System.CommandLine.Invocation;
 using Certes.Cli.Settings;
 using NLog;
 
-namespace Certes.Cli.Commands
+namespace Certes.Cli.Commands;
+
+internal class ServerSetCommand : ICliCommand
 {
-    internal class ServerSetCommand : ICliCommand
+    private static readonly ILogger logger = LogManager.GetLogger(nameof(ServerSetCommand));
+    private readonly AcmeContextFactory contextFactory;
+    private readonly IUserSettings userSettings;
+
+    public ServerSetCommand(IUserSettings userSettings, AcmeContextFactory contextFactory)
     {
-        private static readonly ILogger logger = LogManager.GetLogger(nameof(ServerSetCommand));
-        private readonly AcmeContextFactory contextFactory;
-        private readonly IUserSettings userSettings;
+        this.userSettings = userSettings;
+        this.contextFactory = contextFactory;
+    }
 
-        public ServerSetCommand(IUserSettings userSettings, AcmeContextFactory contextFactory)
+    public CommandGroup Group => CommandGroup.Server;
+
+    public Command Define()
+    {
+        var cmd = new Command("set", Strings.HelpCommandServerSet)
         {
-            this.userSettings = userSettings;
-            this.contextFactory = contextFactory;
-        }
+            new Argument<Uri>("new-server", Strings.HelpNewServer),
+        };
 
-        public CommandGroup Group => CommandGroup.Server;
-
-        public Command Define()
+        cmd.Handler = CommandHandler.Create(async (Uri newServer, IConsole console) =>
         {
-            var cmd = new Command("set", Strings.HelpCommandServerSet)
-            {
-                new Argument<Uri>("new-server", Strings.HelpNewServer),
-            };
+            var ctx = contextFactory.Invoke(newServer, null);
+            logger.Debug("Loading directory from '{0}'", newServer);
+            var directory = await ctx.GetDirectory();
+            await userSettings.SetDefaultServer(newServer);
 
-            cmd.Handler = CommandHandler.Create(async (Uri newServer, IConsole console) =>
+            console.WriteAsJson(new
             {
-                var ctx = contextFactory.Invoke(newServer, null);
-                logger.Debug("Loading directory from '{0}'", newServer);
-                var directory = await ctx.GetDirectory();
-                await userSettings.SetDefaultServer(newServer);
-
-                console.WriteAsJson(new
-                {
-                    location = newServer,
-                    resource = directory,
-                });
+                location = newServer,
+                resource = directory,
             });
+        });
 
-            return cmd;
-        }
+        return cmd;
     }
 }

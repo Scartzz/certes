@@ -1,29 +1,28 @@
 ﻿using Xunit;
 
-namespace Certes.Cli
+namespace Certes.Cli;
+
+public class CertesCliExceptionTests
 {
-    public class CertesCliExceptionTests
+    [Fact]
+    public void CanCreateException()
     {
-        [Fact]
-        public void CanCreateException()
-        {
-            var ex = new CertesCliException();
-        }
+        var ex = new CertesCliException();
+    }
 
-        [Fact]
-        public void CanCreateExceptionWithMessage()
-        {
-            var ex = new CertesCliException("certes");
-            Assert.Equal("certes", ex.Message);
-        }
+    [Fact]
+    public void CanCreateExceptionWithMessage()
+    {
+        var ex = new CertesCliException("certes");
+        Assert.Equal("certes", ex.Message);
+    }
 
-        [Fact]
-        public void CanCreateExceptionWithInnerException()
-        {
-            var inner = new AcmeException();
-            var ex = new CertesCliException("certes", inner);
-            Assert.Equal("certes", ex.Message);
-            Assert.Equal(inner, ex.InnerException);
-        }
+    [Fact]
+    public void CanCreateExceptionWithInnerException()
+    {
+        var inner = new AcmeException();
+        var ex = new CertesCliException("certes", inner);
+        Assert.Equal("certes", ex.Message);
+        Assert.Equal(inner, ex.InnerException);
     }
 }

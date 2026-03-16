@@ -1,15 +1,14 @@
 ﻿using Xunit;
 
-namespace Certes.Acme.Resource
+namespace Certes.Acme.Resource;
+
+public class CertificateRevocationTests
 {
-    public class CertificateRevocationTests
+    [Fact]
+    public void CanGetSetProperties()
     {
-        [Fact]
-        public void CanGetSetProperties()
-        {
-            var entity = new CertificateRevocation();
-            entity.VerifyGetterSetter(e => e.Certificate, "cert");
-            entity.VerifyGetterSetter(e => e.Reason, RevocationReason.KeyCompromise);
-        }
+        var entity = new CertificateRevocation();
+        entity.VerifyGetterSetter(e => e.Certificate, "cert");
+        entity.VerifyGetterSetter(e => e.Reason, RevocationReason.KeyCompromise);
     }
 }

@@ -1,9 +1,9 @@
-namespace Certes
+namespace Certes;
+
+public static class Keys
 {
-    public static class Keys
-    {
-        #region account keys
-        internal const string RS256Key = @"-----BEGIN RSA PRIVATE KEY-----
+    #region account keys
+    internal const string RS256Key = @"-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEAmaeT6EsXTVHAdwuq3IlAl9uljXE5CnkRpr6uSw/Fk9nQshfZ
 qKFdeZHkSBvIaLirE2ZidMEYy+rpS1O2j+viTG5U6bUSWo8aoeKoXwYfwbXNboEA
 +P4HgGCjD22XaXAkBHdhgyZ0UBX2z+jCx1smd7nucsi4h4RhC/2cEB1x/mE6XS5V
@@ -31,27 +31,26 @@ vfcrTi64g4ZJKwd6oPnzkYHho2I0Q3dkPwMAWUHaaWjTAWmiEromE4z9QNb+Inkx
 qeIAldJH4zaLqkEXH/643NjLFeQy7w4cbdODASwGqBEJa9SJJjMfbw==
 -----END RSA PRIVATE KEY-----";
 
-        internal const string ES256Key = @"-----BEGIN EC PRIVATE KEY-----
+    internal const string ES256Key = @"-----BEGIN EC PRIVATE KEY-----
 MDECAQEEIJTKjLb/7vi68uMaaktLL8A8uKeM5r2ibBJm1KPG/xhVoAoGCCqGSM49
 AwEH
 -----END EC PRIVATE KEY-----";
 
-        // Special case: X coord of EC point is a 31 bytes instead of 32 and requires padding before encoding
-        internal const string ES256Key_Alt1 = @"-----BEGIN EC PRIVATE KEY-----
+    // Special case: X coord of EC point is a 31 bytes instead of 32 and requires padding before encoding
+    internal const string ES256Key_Alt1 = @"-----BEGIN EC PRIVATE KEY-----
 MHcCAQEEIDWajU0PyhYKeulfy/luNtkAve7DkwQ01bXJ97zbxB66oAoGCCqGSM49
 AwEHoUQDQgAEAJz0yAAXAwEmOhTRkjXxwgedbWO6gobYM3lWszrS68G8QSzhXR6A
 mQ3IzZDimnTTXO7XhVylDT8SLzE44/Epmw==
 -----END EC PRIVATE KEY-----";
 
-        internal const string ES384Key = @"-----BEGIN EC PRIVATE KEY-----
+    internal const string ES384Key = @"-----BEGIN EC PRIVATE KEY-----
 MD4CAQEEMIipuyxYYQecexCUNx5U9bo+OWhHm7ZfdxRY3juNkNmNTD7r87KHZkNr
 LXMS57GJOqAHBgUrgQQAIg==
 -----END EC PRIVATE KEY-----";
 
-        internal const string ES512Key = @"-----BEGIN EC PRIVATE KEY-----
+    internal const string ES512Key = @"-----BEGIN EC PRIVATE KEY-----
 MFACAQEEQgHjbZs0LAlpMoTgyDNQ5JJajX8TTk0jlm+SPOmP0nJcMb2fK5oqY4z8
 Aq8YDXfnAZVZ2xQJkiysQjyDoJrNpz5kBKAHBgUrgQQAIw==
 -----END EC PRIVATE KEY-----";
-        #endregion
-    }
+    #endregion
 }
