@@ -1,6 +1,6 @@
 # Scartz.Certes
 
-**The project is a fork of https://github.com/fszlin/certes with packaging updates, feature updates and experimental extensions.** 
+**The project is a fork of https://github.com/fszlin/certes with packaging updates.** 
 
 Certes is an [ACME](https://en.wikipedia.org/wiki/Automated_Certificate_Management_Environment)
 client runs on .NET 4.5+ and .NET Standard 2.0+, supports ACME v2 and wildcard certificates.
