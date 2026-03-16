@@ -4,22 +4,22 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
-    <Authors>Certes Contributors</Authors>
+    <Authors>Certes Contributors + Scartz</Authors>
     <Company />
     <Product>Certes ACME Client CLI</Product>
     <Description>Dotnet tool for Automated Certificate Management Environment (ACME) protocol,
       powered by Certes.</Description>
     <PackageType>DotnetTool</PackageType>
-    <PackageProjectUrl>https://github.com/fszlin/certes</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Scartzz/certes</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>Certes;letsencrypt;ACME;HTTPS;SSL;Certificate;dotnettool</PackageTags>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/fszlin/certes</RepositoryUrl>
-    <PackageId>dotnet-certes</PackageId>
+    <RepositoryUrl>https://github.com/Scartzz/certes</RepositoryUrl>
+    <PackageId>scartz-dotnet-certes</PackageId>
     <PackageIcon>logo.png</PackageIcon>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>certes</ToolCommandName>
-    <AssemblyName>dotnet-certes</AssemblyName>
+    <AssemblyName>scartz-dotnet-certes</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
