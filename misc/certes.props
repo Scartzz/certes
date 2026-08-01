@@ -6,7 +6,7 @@
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition="'$(TargetFramework)' != 'net462'">True</PublicSign>
     <AssemblyOriginatorKeyFile>../../misc/certes.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>3.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.1</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(APPVEYOR)' != ''">
     <CertesFileVersionSuffix>.$(APPVEYOR_BUILD_NUMBER)</CertesFileVersionSuffix>

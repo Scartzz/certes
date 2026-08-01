@@ -36,6 +36,7 @@ public class Order
     /// <value>
     /// The identifiers.
     /// </value>
+    [JsonPropertyName("identifiers")]
     public IList<Identifier> Identifiers { get; set; }
 
     /// <summary>
